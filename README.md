@@ -102,6 +102,15 @@ com.example.wassndis
 
 ### Installation & Build
 
+> [!NOTE]
+> **For New Clones**: The repository contains the complete Gradle Wrapper (`gradlew`, wrapper jar, and dependencies configuration) and requires no checked-in API keys or private files to compile cleanly.
+>
+> When building via command line without Android Studio, make sure your Android SDK path is exposed via the environment:
+> ```bash
+> export ANDROID_HOME=$HOME/Android/Sdk # or export ANDROID_SDK_ROOT=...
+> ```
+> Alternatively, opening the project once in Android Studio will automatically generate your machine-specific `local.properties`.
+
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/Carcophan/wassndis.git
