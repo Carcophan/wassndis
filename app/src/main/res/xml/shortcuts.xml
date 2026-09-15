@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="scan_object"
+        android:enabled="true"
+        android:icon="@drawable/ic_qs_scan"
+        android:shortcutShortLabel="@string/shortcut_scan_short_label"
+        android:shortcutLongLabel="@string/shortcut_scan_long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.wassndis"
+            android:targetClass="com.example.wassndis.MainActivity">
+            <extra
+                android:name="extra_quick_capture"
+                android:value="true" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

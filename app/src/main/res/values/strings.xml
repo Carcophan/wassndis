@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Что это</string>
+    <string name="tile_scan_label">Что это Scan</string>
+    <string name="tile_scan_subtitle">Objekt scannen</string>
+    <string name="shortcut_scan_short_label">Scannen</string>
+    <string name="shortcut_scan_long_label">Objekt mit Что это scannen</string>
+    <string name="widget_scan_label">Что это Scan</string>
+    <string name="widget_scan_description">Schnellstart für den Что это Kamera-Scan</string>
+</resources>
