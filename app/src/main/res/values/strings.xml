@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Что это</string>
+    <string name="app_name">Что это?</string>
     <string name="tile_scan_label">Что это Scan</string>
     <string name="tile_scan_subtitle">Objekt scannen</string>
     <string name="shortcut_scan_short_label">Scannen</string>
