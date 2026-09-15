@@ -1,142 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Camera Lens Housing Bezel & Aperture Rings -->
+    <!-- Magnifier Lens Handle -->
     <path
-        android:pathData="M54,49m-24,0a24,24 0 1,0 48,0a24,24 0 1,0 -48,0"
-        android:strokeWidth="1.5"
-        android:strokeColor="#FF2A334B"
-        android:fillColor="#FF111524" />
-
-    <path
-        android:pathData="M54,49m-19,0a19,19 0 1,0 38,0a19,19 0 1,0 -38,0"
-        android:strokeWidth="1.2"
-        android:strokeColor="#FF3B4866"
-        android:fillColor="#FF0C0F1A" />
-
-    <path
-        android:pathData="M54,49m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0"
-        android:strokeWidth="1"
-        android:strokeColor="#FF4A5568"
-        android:fillColor="#FF070810" />
-
-    <!-- Glass Reflection Highlight Arc -->
-    <path
-        android:pathData="M41,43 A17,17 0 0,1 63,35"
-        android:strokeWidth="1.8"
-        android:strokeColor="#25FFFFFF"
+        android:pathData="M66,63 L77,74"
+        android:strokeWidth="7"
+        android:strokeColor="#FF0D80FA"
         android:strokeLineCap="round"
         android:fillColor="#00000000" />
 
-    <!-- Viewfinder Focus Reticle: Top-Left Bracket -->
+    <!-- Magnifier Outer Lens Ring -->
     <path
-        android:pathData="M32,41 L32,33 C32,31 32,31 34,31 L42,31"
-        android:strokeWidth="2.5"
-        android:strokeColor="#FF38BDF8"
+        android:pathData="M50,23.5 A23.5,23.5 0 1,0 50.01,23.5"
+        android:strokeWidth="5.5"
+        android:strokeColor="#FF0D80FA"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round"
         android:fillColor="#00000000" />
 
-    <!-- Viewfinder Focus Reticle: Top-Right Bracket -->
+    <!-- Cyan Inner Crescent Arc -->
     <path
-        android:pathData="M66,31 L74,31 C76,31 76,31 76,33 L76,41"
-        android:strokeWidth="2.5"
-        android:strokeColor="#FF38BDF8"
+        android:pathData="M35,52 A17,17 0 0,1 64.5,40"
+        android:strokeWidth="4"
+        android:strokeColor="#FF00E5FF"
         android:strokeLineCap="round"
-        android:strokeLineJoin="round"
         android:fillColor="#00000000" />
 
-    <!-- Viewfinder Focus Reticle: Bottom-Right Bracket -->
+    <!-- Vibrant Coral Question Mark Hook -->
     <path
-        android:pathData="M76,65 L76,73 C76,75 76,75 74,75 L66,75"
-        android:strokeWidth="2.5"
-        android:strokeColor="#FF38BDF8"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:fillColor="#00000000" />
-
-    <!-- Viewfinder Focus Reticle: Bottom-Left Bracket -->
-    <path
-        android:pathData="M42,75 L34,75 C32,75 32,75 32,73 L32,65"
-        android:strokeWidth="2.5"
-        android:strokeColor="#FF38BDF8"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:fillColor="#00000000" />
-
-    <!-- Reticle Alignment Crosshair Dots -->
-    <path
-        android:pathData="M54,29m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0"
-        android:fillColor="#FF38BDF8" />
-    <path
-        android:pathData="M54,77m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0"
-        android:fillColor="#FF38BDF8" />
-    <path
-        android:pathData="M30,53m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0"
-        android:fillColor="#FF38BDF8" />
-    <path
-        android:pathData="M78,53m-1,0a1,1 0 1,0 2,0a1,1 0 1,0 -2,0"
-        android:fillColor="#FF38BDF8" />
-
-    <!-- Neon Question Mark: Soft Ambient Aura Glow -->
-    <path
-        android:pathData="M43,39 C43,32.5 47,28 54,28 C61.5,28 66,32.5 66,39 C66,45.5 60.5,49 57,52.5 C54.5,55 54,58 54,61"
-        android:strokeWidth="8.5"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:strokeColor="#30EC4899"
-        android:fillColor="#00000000" />
-
-    <!-- Neon Question Mark: Outer Vibrant Gradient Tube -->
-    <path
-        android:pathData="M43,39 C43,32.5 47,28 54,28 C61.5,28 66,32.5 66,39 C66,45.5 60.5,49 57,52.5 C54.5,55 54,58 54,61"
+        android:pathData="M43,44.5 C43,37 47,33.5 53,33.5 C59,33.5 62,37 62,42 C62,47 57,49.5 54,52.5 C52,54.5 51.5,57.5 51.5,63"
         android:strokeWidth="5"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:fillColor="#00000000">
-        <aapt:attr name="android:strokeColor">
-            <gradient
-                android:startX="43"
-                android:startY="28"
-                android:endX="66"
-                android:endY="61"
-                android:type="linear">
-                <item android:color="#FFFBBF24" android:offset="0.0" />
-                <item android:color="#FFF97316" android:offset="0.25" />
-                <item android:color="#FFEC4899" android:offset="0.65" />
-                <item android:color="#FF8B5CF6" android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
-
-    <!-- Neon Question Mark: Luminous Core -->
-    <path
-        android:pathData="M43,39 C43,32.5 47,28 54,28 C61.5,28 66,32.5 66,39 C66,45.5 60.5,49 57,52.5 C54.5,55 54,58 54,61"
-        android:strokeWidth="1.8"
-        android:strokeColor="#FFFFFFFF"
+        android:strokeColor="#FFFF6B4A"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000" />
 
-    <!-- Question Mark Dot: Outer Glow -->
+    <!-- Question Mark Dot -->
     <path
-        android:pathData="M54,69m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0"
-        android:fillColor="#358B5CF6" />
-
-    <!-- Question Mark Dot: Vibrant Ring -->
-    <path
-        android:pathData="M54,69m-3.5,0a3.5,3.5 0 1,0 7,0a3.5,3.5 0 1,0 -7,0"
-        android:strokeWidth="1.5"
-        android:strokeColor="#FFEC4899"
-        android:fillColor="#FF8B5CF6" />
-
-    <!-- Question Mark Dot: Glowing Core -->
-    <path
-        android:pathData="M54,69m-1.5,0a1.5,1.5 0 1,0 3,0a1.5,1.5 0 1,0 -3,0"
-        android:fillColor="#FFFFFFFF" />
+        android:pathData="M51.5,73m-3.6,0a3.6,3.6 0 1,0 7.2,0a3.6,3.6 0 1,0 -7.2,0"
+        android:fillColor="#FF0D80FA" />
 </vector>
