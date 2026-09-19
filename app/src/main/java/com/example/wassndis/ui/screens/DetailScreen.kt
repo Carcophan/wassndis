@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -45,6 +46,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.wassndis.data.AnalysisItem
 import com.example.wassndis.data.QaItem
+import com.example.wassndis.ui.components.GeminiMarkdownText
+import com.example.wassndis.ui.components.InlineMarkdownText
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,14 +58,17 @@ fun DetailScreen(
     item: AnalysisItem,
     isAnalyzing: Boolean,
     isAnsweringQuestion: Boolean = false,
+    isGeneratingPdf: Boolean = false,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     onReanalyze: () -> Unit,
     onAskQuestion: (String) -> Unit = {},
-    onDeleteQuestion: (String) -> Unit = {}
+    onDeleteQuestion: (String) -> Unit = {},
+    onGeneratePdf: (((Uri?) -> Unit) -> Unit) = {}
 ) {
     val context = LocalContext.current
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var generatedPdfUri by remember { mutableStateOf<Uri?>(null) }
 
     val formattedDate = remember(item.timestamp) {
         val sdf = SimpleDateFormat("dd. MMMM yyyy, HH:mm 'Uhr'", Locale.GERMANY)
@@ -135,6 +141,31 @@ fun DetailScreen(
                             imageVector = Icons.Outlined.Share,
                             contentDescription = "Teilen"
                         )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onGeneratePdf { uri ->
+                                if (uri != null) {
+                                    generatedPdfUri = uri
+                                }
+                            }
+                        },
+                        enabled = !isGeneratingPdf
+                    ) {
+                        if (isGeneratingPdf) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PictureAsPdf,
+                                contentDescription = "PDF-Bericht exportieren",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
 
                     IconButton(
@@ -264,6 +295,94 @@ fun DetailScreen(
                 }
             }
 
+            // Quick Action Buttons (PDF Report & Text Share)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Button(
+                    onClick = {
+                        onGeneratePdf { uri ->
+                            if (uri != null) {
+                                generatedPdfUri = uri
+                            }
+                        }
+                    },
+                    enabled = !isGeneratingPdf,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                ) {
+                    if (isGeneratingPdf) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "PDF erstellen...",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.PictureAsPdf,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "PDF-Bericht",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                OutlinedButton(
+                    onClick = {
+                        val shareText = buildString {
+                            appendLine("🔍 Gegenstand im Fokus: ${item.mainObject.ifBlank { item.title }}")
+                            if (item.category.isNotBlank()) appendLine("🏷️ Kategorie: ${item.category}")
+                            if (item.shortDescription.isNotBlank()) {
+                                appendLine("\n💡 Kurzbeschreibung:")
+                                appendLine(item.shortDescription)
+                            }
+                            if (item.objectDetails.isNotEmpty()) {
+                                appendLine("\n📋 Details & Merkmale:")
+                                item.objectDetails.forEach { (k, v) -> appendLine("• $k: $v") }
+                            }
+                            appendLine("\n📖 Gegenstands-Erklärung & Funktion (${item.modelUsed}):")
+                            appendLine(item.fullDescription)
+                        }
+                        val sendIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, shareText)
+                            type = "text/plain"
+                        }
+                        context.startActivity(Intent.createChooser(sendIntent, "Analyse teilen"))
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Share,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Text teilen",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
             // Section 1: Hauptgegenstand im Fokus & Objektdetails
             Card(
                 shape = RoundedCornerShape(20.dp),
@@ -327,12 +446,11 @@ fun DetailScreen(
                             color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
+                            InlineMarkdownText(
                                 text = item.shortDescription,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(12.dp),
-                                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.25f
+                                modifier = Modifier.padding(12.dp)
                             )
                         }
                     }
@@ -381,7 +499,7 @@ fun DetailScreen(
                                             color = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.widthIn(min = 110.dp)
                                         )
-                                        Text(
+                                        InlineMarkdownText(
                                             text = detailValue,
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurface,
@@ -456,11 +574,18 @@ fun DetailScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = item.fullDescription.ifBlank { "Keine ausführliche Gegenstands-Erklärung vorhanden." },
-                        style = MaterialTheme.typography.bodyLarge,
-                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.3f
-                    )
+                    if (item.fullDescription.isBlank()) {
+                        Text(
+                            text = "Keine ausführliche Gegenstands-Erklärung vorhanden.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        GeminiMarkdownText(
+                            markdown = item.fullDescription,
+                            baseTextStyle = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
 
@@ -719,6 +844,81 @@ fun DetailScreen(
             }
         )
     }
+
+    // PDF Generated Action Dialog
+    if (generatedPdfUri != null) {
+        val uri = generatedPdfUri!!
+        AlertDialog(
+            onDismissRequest = { generatedPdfUri = null },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.PictureAsPdf,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "PDF-Bericht bereit",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "Der DIN-A4 Analysebericht für „${item.mainObject.ifBlank { item.title }}“ wurde erfolgreich generiert.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val pdfUriToShare = uri
+                        generatedPdfUri = null
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "application/pdf"
+                            putExtra(Intent.EXTRA_STREAM, pdfUriToShare)
+                            putExtra(Intent.EXTRA_SUBJECT, "Analysebericht: ${item.mainObject.ifBlank { item.title }}")
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "PDF-Bericht teilen"))
+                    }
+                ) {
+                    Icon(imageVector = Icons.Outlined.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Teilen")
+                }
+            },
+            dismissButton = {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    TextButton(
+                        onClick = { generatedPdfUri = null }
+                    ) {
+                        Text("Schließen")
+                    }
+                    FilledTonalButton(
+                        onClick = {
+                            val pdfUriToView = uri
+                            generatedPdfUri = null
+                            try {
+                                val viewIntent = Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(pdfUriToView, "application/pdf")
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(Intent.createChooser(viewIntent, "PDF öffnen"))
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Kein PDF-Viewer auf dem Gerät gefunden", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Default.Visibility, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Öffnen")
+                    }
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -856,12 +1056,10 @@ private fun QaCard(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = qa.answer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.25f,
-                        color = MaterialTheme.colorScheme.onSurface
+                    Spacer(modifier = Modifier.height(6.dp))
+                    GeminiMarkdownText(
+                        markdown = qa.answer,
+                        baseTextStyle = MaterialTheme.typography.bodyMedium
                     )
                 }
             }

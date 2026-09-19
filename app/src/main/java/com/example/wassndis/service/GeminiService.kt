@@ -80,7 +80,7 @@ class GeminiService {
                     "Besondere Merkmale": "Auffällige Konstruktionsmerkmale oder Spezialfunktionen",
                     "Kennzeichnungen": "Sichtbare Logos, Typenbezeichnungen oder Skalen"
                   },
-                  "fullDescription": "Fundierte, tiefgehende Gegenstandsanalyse wie in einem Fachlexikon: Detaillierte Erläuterung der Funktionsweise, der einzelnen Komponenten, des Einsatzbereichs, relevanter technischer Eigenschaften sowie wissenswerter Hintergründe zu diesem Objekt.",
+                  "fullDescription": "Fundierte, tiefgehende Gegenstandsanalyse wie in einem Fachlexikon: Detaillierte Erläuterung der Funktionsweise, der einzelnen Komponenten, des Einsatzbereichs, relevanter technischer Eigenschaften sowie wissenswerter Hintergründe zu diesem Objekt. Nutze strukturierte Markdown-Formatierung (Absätze, Zwischenüberschriften mit ###, Aufzählungen mit * und Hervorhebungen mit **fett**) für beste Übersichtlichkeit.",
                   "tags": ["Schlagwort1", "Schlagwort2", "Schlagwort3", "Schlagwort4"]
                 }
             """.trimIndent()
@@ -161,7 +161,7 @@ class GeminiService {
             }
             promptBuilder.appendLine("Der Benutzer hat eine konkrete Nachfrage zu diesem Gegenstand bzw. Foto.")
             promptBuilder.appendLine("Beantworte die Frage sachkundig, präzise, direkt und verständlich auf Deutsch.")
-            promptBuilder.appendLine("Nutze bei Bedarf strukturierte Absätze oder Aufzählungspunkte, vermeide unnötige Floskeln.")
+            promptBuilder.appendLine("Nutze bei Bedarf strukturierte Markdown-Formatierung (Absätze, Zwischenüberschriften mit ###, Aufzählungen mit * und fette Schlüsselbegriffe mit **wichtig**). Vermeide unnötige Floskeln.")
 
             if (previousQuestions.isNotEmpty()) {
                 promptBuilder.appendLine("\nBisheriger Fragen-Verlauf zu diesem Gegenstand:")
@@ -244,21 +244,35 @@ class GeminiService {
         val parts = content.getJSONArray("parts")
         val rawText = parts.getJSONObject(0).getString("text")
 
-        // Parse JSON from text (remove markdown backticks if any)
-        val cleanText = rawText.trim()
-            .removePrefix("```json")
-            .removePrefix("```")
-            .removeSuffix("```")
-            .trim()
+        // Parse JSON from text (remove markdown backticks or preamble if any)
+        val trimmedRaw = rawText.trim()
+        val jsonStart = trimmedRaw.indexOf('{')
+        val jsonEnd = trimmedRaw.lastIndexOf('}')
+        val cleanText = if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
+            trimmedRaw.substring(jsonStart, jsonEnd + 1)
+        } else {
+            trimmedRaw
+                .removePrefix("```json")
+                .removePrefix("```JSON")
+                .removePrefix("```")
+                .removeSuffix("```")
+                .trim()
+        }
 
         val json = try {
             JSONObject(cleanText)
         } catch (e: Exception) {
             // Fallback if model didn't return pure json
+            val fallbackClean = trimmedRaw
+                .removePrefix("```json")
+                .removePrefix("```JSON")
+                .removePrefix("```")
+                .removeSuffix("```")
+                .trim()
             return GeminiAnalysisResult(
                 title = "Foto-Analyse",
-                shortDescription = cleanText.take(160) + if (cleanText.length > 160) "..." else "",
-                fullDescription = cleanText,
+                shortDescription = fallbackClean.take(160) + if (fallbackClean.length > 160) "..." else "",
+                fullDescription = fallbackClean,
                 tags = listOf("Analyse", "Gemini"),
                 mainObject = "Hauptgegenstand",
                 category = "",

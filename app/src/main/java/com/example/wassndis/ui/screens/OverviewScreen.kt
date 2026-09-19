@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.wassndis.R
 import com.example.wassndis.data.AnalysisItem
+import com.example.wassndis.ui.components.stripMarkdown
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -415,7 +416,7 @@ fun PhotoAnalysisCard(
 
                 // Kurzbeschreibungstext
                 Text(
-                    text = item.shortDescription.ifBlank { "Keine Kurzbeschreibung verfügbar." },
+                    text = stripMarkdown(item.shortDescription).ifBlank { "Keine Kurzbeschreibung verfügbar." },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,

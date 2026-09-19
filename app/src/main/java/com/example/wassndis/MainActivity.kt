@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                 val showSettingsDialog by viewModel.showSettingsDialog.collectAsState()
                 val apiKey by viewModel.apiKey.collectAsState()
                 val selectedModel by viewModel.selectedModel.collectAsState()
+                val isGeneratingPdf by viewModel.isGeneratingPdf.collectAsState()
 
                 val snackbarHostState = remember { SnackbarHostState() }
 
@@ -144,11 +145,13 @@ class MainActivity : ComponentActivity() {
                                 item = targetItem,
                                 isAnalyzing = isAnalyzing,
                                 isAnsweringQuestion = isAnsweringQuestion,
+                                isGeneratingPdf = isGeneratingPdf,
                                 onBack = { viewModel.selectItem(null) },
                                 onDelete = { viewModel.deleteItem(targetItem) },
                                 onReanalyze = { viewModel.reanalyzeItem(targetItem) },
                                 onAskQuestion = { question -> viewModel.askQuestion(targetItem, question) },
-                                onDeleteQuestion = { questionId -> viewModel.deleteQuestion(targetItem, questionId) }
+                                onDeleteQuestion = { questionId -> viewModel.deleteQuestion(targetItem, questionId) },
+                                onGeneratePdf = { onComplete -> viewModel.generatePdfReport(targetItem, onComplete) }
                             )
                         } else {
                             OverviewScreen(

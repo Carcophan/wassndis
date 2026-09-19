@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.wassndis.service.PdfReportService
 import java.io.File
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = AnalysisRepository(application)
     private val geminiService = GeminiService()
+    private val pdfReportService = PdfReportService(application)
 
     private val _items = MutableStateFlow<List<AnalysisItem>>(emptyList())
     val items: StateFlow<List<AnalysisItem>> = _items.asStateFlow()
@@ -33,6 +35,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isAnsweringQuestion = MutableStateFlow(false)
     val isAnsweringQuestion: StateFlow<Boolean> = _isAnsweringQuestion.asStateFlow()
+
+    private val _isGeneratingPdf = MutableStateFlow(false)
+    val isGeneratingPdf: StateFlow<Boolean> = _isGeneratingPdf.asStateFlow()
 
     private val _analysisStatus = MutableStateFlow("")
     val analysisStatus: StateFlow<String> = _analysisStatus.asStateFlow()
@@ -271,6 +276,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _items.value = updatedList
             if (_selectedItem.value?.id == item.id) {
                 _selectedItem.value = null
+            }
+        }
+    }
+
+    fun generatePdfReport(item: AnalysisItem, onComplete: (Uri?) -> Unit) {
+        viewModelScope.launch {
+            _isGeneratingPdf.value = true
+            try {
+                val (_, uri) = pdfReportService.generatePdf(item)
+                _isGeneratingPdf.value = false
+                onComplete(uri)
+            } catch (e: Exception) {
+                _isGeneratingPdf.value = false
+                _errorMessage.value = "Fehler beim Erstellen des PDFs: ${e.localizedMessage}"
+                onComplete(null)
             }
         }
     }

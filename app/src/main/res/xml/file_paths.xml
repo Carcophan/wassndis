@@ -2,4 +2,5 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <files-path name="wassndis_images" path="images/" />
     <cache-path name="wassndis_cache" path="images/" />
+    <cache-path name="wassndis_pdfs" path="pdfs/" />
 </paths>
