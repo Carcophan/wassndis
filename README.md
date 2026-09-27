@@ -121,14 +121,21 @@ com.example.wassndis
    - Open Android Studio, choose **File > Open**, and select the project directory.
    - Wait for Gradle to sync dependencies.
 
-3. **Build via Command Line**:
+3. **Build & Deploy via Command Line**:
    ```bash
-   # Assemble debug APK
-   ./gradlew assembleDebug
-
-   # Install directly onto a connected device or emulator
+   # Install debug build directly onto a connected device or emulator
    ./gradlew installDebug
+
+   # Install release build directly onto a connected device
+   ./gradlew installRelease
+
+   # Or build standalone APKs without installing:
+   ./gradlew assembleDebug    # Output: app/build/outputs/apk/debug/app-debug.apk
+   ./gradlew assembleRelease  # Output: app/build/outputs/apk/release/app-release.apk
    ```
+
+   > [!TIP]
+   > The `release` build is pre-configured to sign using the local debug keystore for friction-free testing on physical devices via `./gradlew installRelease`. For production distribution (e.g. Play Store), replace the signing config with a dedicated release keystore.
 
 ---
 
